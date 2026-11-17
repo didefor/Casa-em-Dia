@@ -2469,10 +2469,11 @@ async function showLogin(msg = '') {
     <button class="btn primary">Entrar</button>
     ${info.signup ? '<p class="small" style="margin:0;text-align:center">Não tem acesso? <button type="button" class="link-btn" id="toSignup">Criar conta</button></p>' : ''}
     <div class="field" id="l_code_f" hidden><label for="l_code">Código de 2 etapas</label><input id="l_code" name="code" inputmode="numeric" autocomplete="one-time-code" placeholder="6 números do app autenticador"><span class="hint">Perdeu o celular? Use um código de recuperação (ex.: a1b2c-3d4e5).</span></div>
-    <p class="muted small" style="margin:0">Esqueceu a senha? Peça ao administrador para definir uma nova em Acessos. · <a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a></p>
+    <p class="muted small" style="margin:0">Esqueceu a senha? Peça ao administrador da sua casa para definir uma nova em Acessos. · <a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a> · <a href="/">Conheça o Casa em Dia</a></p>
   </form>`);
   $('#l_login').focus();
   const ts = $('#toSignup'); if (ts) ts.onclick = showSignup;
+  if (info.signup && location.hash === '#criar-conta') return showSignup();
   $('#loginForm').onsubmit = async (e) => {
     e.preventDefault();
     const f = e.target;
@@ -2486,9 +2487,9 @@ async function showLogin(msg = '') {
 
 function showSignup() {
   authScreen(`<form class="panel auth-card" id="signupForm">
-    <div class="auth-brand">${LOGO}<div><b>Casa em Dia</b><small>Pedir acesso</small></div></div>
+    <div class="auth-brand">${LOGO}<div><b>Casa em Dia</b><small>Criar conta</small></div></div>
     <h2>Criar conta</h2>
-    <p class="muted small" style="margin:0">Você ganha uma conta só sua: seus dados ficam separados e ninguém mais vê. O administrador do servidor só precisa aprovar o cadastro.</p>
+    <p class="muted small" style="margin:0">Você ganha uma conta só sua: seus dados ficam separados e ninguém mais vê. Depois, convide quem divide a casa com você em Acessos.</p>
     <div class="field"><label for="r_name">Seu nome</label><input id="r_name" autocomplete="name" required></div>
     <div class="field"><label for="r_login">Login</label><input id="r_login" autocomplete="username" autocapitalize="none" required></div>
     <div class="form-row">
@@ -2497,7 +2498,7 @@ function showSignup() {
     </div>
     <label class="of-check small"><input type="checkbox" id="r_terms" required> <span>Li e aceito a <a href="privacidade.html" target="_blank" rel="noopener">política de privacidade e os termos de uso</a></span></label>
     <div class="error" id="signupErr"></div>
-    <button class="btn primary">Pedir acesso</button>
+    <button class="btn primary">Criar conta e entrar</button>
     <p class="small" style="margin:0;text-align:center"><button type="button" class="link-btn" id="toLogin">Já tenho acesso: entrar</button></p>
   </form>`);
   $('#r_name').focus();
@@ -2507,7 +2508,8 @@ function showSignup() {
     if ($('#r_pass').value !== $('#r_pass2').value) { $('#signupErr').textContent = 'As senhas não conferem'; return; }
     try {
       await api('signup', { method: 'POST', body: { name: $('#r_name').value, login: $('#r_login').value, password: $('#r_pass').value, accept_terms: $('#r_terms').checked } });
-      showLogin('Cadastro enviado. Assim que o administrador aprovar, entre com seu login e senha.');
+      if (location.hash === '#criar-conta') history.replaceState(null, '', location.pathname);
+      start();
     } catch (err) { $('#signupErr').textContent = err.message; }
   };
 }

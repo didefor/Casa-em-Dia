@@ -1,0 +1,477 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Casa em Dia · finanças da casa para casais</title>
+  <meta name="description" content="Salário, cartões, contas fixas e a divisão das despesas do casal num painel só. Veja quanto sobra no fim do mês antes de o mês acabar.">
+  <meta name="theme-color" content="#f6f7f9">
+  <meta property="og:title" content="Casa em Dia · finanças da casa para casais">
+  <meta property="og:description" content="Contas, cartões e a divisão das despesas do casal num painel só.">
+  <meta property="og:image" content="/img/home/og.jpg">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/img/app-180.png">
+  <link rel="preload" href="/vendor/manrope/manrope-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="/vendor/phosphor/regular.css">
+  <link rel="stylesheet" href="/vendor/phosphor/fill.css">
+  <script>
+    // links antigos do app (ex.: /#visao) continuam funcionando
+    if (location.hash.length > 1 && !['#recursos', '#como', '#ia', '#perguntas', '#conteudo'].includes(location.hash)) location.replace('/app' + location.hash);
+  </script>
+  <style>
+    @font-face { font-family: Manrope; font-style: normal; font-display: swap; font-weight: 200 800; src: url(/vendor/manrope/manrope-latin-wght-normal.woff2) format('woff2'); unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+    @font-face { font-family: Manrope; font-style: normal; font-display: swap; font-weight: 200 800; src: url(/vendor/manrope/manrope-latin-ext-wght-normal.woff2) format('woff2'); unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF; }
+    :root {
+      --bg: #f6f7f9; --panel: #ffffff; --panel-2: #eef1f6; --line: #e3e7ee;
+      --tx: #0f172a; --muted: #5b6475; --soft: #8a93a3;
+      --blue: #2563eb; --blue-hover: #1d4ed8; --blue-soft: #e8efff;
+      --green: #16a34a; --green-soft: #e7f6ec; --rose: #f43f5e;
+      --dark: #181818; --dark-2: #272727; --dark-3: #313131;
+      --ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    html { scroll-behavior: smooth; }
+    body { margin: 0; background: var(--bg); color: var(--tx); font-family: Manrope, system-ui, sans-serif; font-size: 16px; line-height: 24px; -webkit-font-smoothing: antialiased; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; }
+    h1, h2, h3 { text-wrap: balance; margin: 0; font-weight: 700; letter-spacing: -0.02em; }
+    p { text-wrap: pretty; margin: 0; }
+    .wrap { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .skip { position: absolute; left: 16px; top: -48px; background: var(--blue); color: #fff; padding: 8px 12px; border-radius: 8px; z-index: 100; text-decoration: none; font-weight: 600; transition: transform 300ms var(--ease); }
+    .skip:focus { transform: translateY(64px); }
+    :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+    /* botões */
+    .btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; font: 600 16px/24px Manrope, sans-serif; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: background-color 300ms var(--ease), transform 300ms var(--ease), border-color 300ms var(--ease); }
+    .btn:active { transform: scale(0.98); }
+    .btn.primary { background: var(--blue); color: #fff; }
+    .btn.primary:hover { background: var(--blue-hover); transform: translateY(-1px); }
+    .btn.ghost { background: var(--panel); border-color: var(--line); color: var(--tx); }
+    .btn.ghost:hover { border-color: var(--soft); }
+    .btn.lg { padding: 12px 24px; }
+    .btn.sm { font-size: 14px; line-height: 20px; padding: 8px 12px; border-radius: 8px; }
+
+    /* navegação */
+    .nav { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 50; display: flex; align-items: center; gap: 24px; padding: 8px 8px 8px 16px; border-radius: 16px; background: rgba(255,255,255,0.78); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(15,23,42,0.08); box-shadow: 0 8px 32px rgba(15,23,42,0.06); width: max-content; max-width: calc(100% - 32px); }
+    .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 700; }
+    .brand img { width: 32px; height: 32px; border-radius: 8px; }
+    .nav-links { display: flex; gap: 4px; }
+    .nav-acoes { display: flex; gap: 8px; }
+    .nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; line-height: 20px; font-weight: 600; padding: 8px 12px; border-radius: 8px; transition: color 300ms var(--ease), background-color 300ms var(--ease); }
+    .nav-links a:hover, .nav-links a.on { color: var(--tx); background: var(--panel-2); }
+    .menu-btn { display: none; width: 40px; height: 40px; border: 0; background: transparent; border-radius: 8px; cursor: pointer; position: relative; }
+    .menu-btn span { position: absolute; left: 12px; width: 16px; height: 2px; background: var(--tx); border-radius: 2px; transition: transform 500ms var(--ease), opacity 300ms var(--ease); }
+    .menu-btn span:nth-child(1) { top: 14px; } .menu-btn span:nth-child(2) { top: 19px; } .menu-btn span:nth-child(3) { top: 24px; }
+    .menu-open .menu-btn span:nth-child(1) { transform: translateY(5px) rotate(45deg); }
+    .menu-open .menu-btn span:nth-child(2) { opacity: 0; }
+    .menu-open .menu-btn span:nth-child(3) { transform: translateY(-5px) rotate(-45deg); }
+    .mobile-panel { position: fixed; inset: 0; z-index: 40; background: rgba(246,247,249,0.94); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); padding: 96px 24px 32px; display: flex; flex-direction: column; gap: 8px; opacity: 0; pointer-events: none; transition: opacity 300ms var(--ease); }
+    .menu-open .mobile-panel { opacity: 1; pointer-events: auto; }
+    .mobile-panel a { font-size: 24px; line-height: 32px; font-weight: 600; text-decoration: none; padding: 12px 0; opacity: 0; transform: translateY(24px); transition: opacity 500ms var(--ease), transform 500ms var(--ease); }
+    .menu-open .mobile-panel a { opacity: 1; transform: none; }
+    .mobile-panel .btn { margin-top: 8px; justify-content: center; font-size: 16px; }
+
+    /* topo */
+    .hero { padding: 160px 0 64px; text-align: center; }
+    .eyebrow { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; font-weight: 600; color: var(--blue); background: var(--blue-soft); padding: 4px 12px; border-radius: 9999px; }
+    .hero h1 { font-size: 48px; line-height: 1; max-width: 680px; margin: 24px auto 0; background: linear-gradient(90deg, #000000, #666666); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 8px; }
+    .hero .sub { font-size: 20px; line-height: 28px; color: var(--muted); max-width: 680px; margin: 24px auto 0; }
+    .hero .ctas { display: flex; gap: 12px; justify-content: center; margin-top: 32px; flex-wrap: wrap; }
+    .hero .nota { margin-top: 12px; font-size: 14px; line-height: 20px; color: var(--soft); }
+    .provas { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; margin-top: 32px; }
+    .prova { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--muted); background: var(--panel); border: 1px solid var(--line); border-radius: 9999px; padding: 4px 12px; }
+    .prova i { color: var(--green); font-size: 16px; }
+    .vitrine { position: relative; margin: 64px auto 0; max-width: 1080px; }
+    .tela { border-radius: 24px; padding: 8px; background: var(--panel); border: 1px solid var(--line); box-shadow: 0 32px 80px rgba(15,23,42,0.12); }
+    .tela img { border-radius: 16px; width: 100%; height: auto; }
+    .telas .tela img, .vitrine .tela img { height: auto; }
+    .cel { position: absolute; right: -24px; bottom: -40px; width: 220px; border-radius: 32px; padding: 8px; background: #0f172a; box-shadow: 0 24px 64px rgba(15,23,42,0.28); }
+    .cel img { border-radius: 24px; width: 100%; height: auto; }
+
+    /* seções */
+    section { padding: 96px 0; }
+    .titulo { max-width: 680px; }
+    .titulo.centro { margin: 0 auto; text-align: center; }
+    .titulo .kicker { font-size: 14px; line-height: 20px; font-weight: 600; color: var(--blue); }
+    .titulo h2 { font-size: 36px; line-height: 40px; margin-top: 8px; }
+    .titulo p { color: var(--muted); font-size: 18px; line-height: 28px; margin-top: 16px; }
+
+    .problema { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; }
+    .caixa { background: var(--panel); border: 1px solid var(--line); border-radius: 24px; padding: 32px; }
+    .caixa h3 { font-size: 20px; line-height: 28px; display: flex; align-items: center; gap: 8px; }
+    .caixa p { color: var(--muted); margin-top: 12px; }
+    .caixa ul { list-style: none; padding: 0; margin: 16px 0 0; display: grid; gap: 12px; }
+    .caixa li { display: flex; gap: 12px; align-items: flex-start; }
+    .caixa li i { color: var(--green); font-size: 20px; margin-top: 2px; flex: none; }
+    .caixa.antes h3 i { color: var(--rose); }
+    .caixa.depois { border-color: #c7d7fe; }
+    .caixa.depois h3 i { color: var(--blue); }
+
+    /* frase de destaque */
+    .frase { padding: 128px 0; }
+    .frase p { font-size: 60px; line-height: 1; font-weight: 700; letter-spacing: -0.02em; max-width: 880px; text-wrap: balance; }
+    .frase .w { color: rgba(15,23,42,0.28); transition: color 600ms var(--ease); }
+    .frase .w.on { color: var(--tx); }
+    .frase .w.azul.on { color: var(--blue); }
+
+    /* benefícios */
+    .beneficios { display: grid; grid-template-columns: repeat(6, 1fr); gap: 24px; margin-top: 48px; }
+    .ben { grid-column: span 2; background: var(--panel); border: 1px solid var(--line); border-radius: 24px; padding: 32px; transition: transform 500ms var(--ease), border-color 300ms var(--ease); }
+    .ben:hover { transform: translateY(-4px); border-color: #c7d7fe; }
+    .ben.largo { grid-column: span 3; }
+    .ben .ic { width: 48px; height: 48px; border-radius: 12px; background: var(--blue-soft); color: var(--blue); display: grid; place-items: center; font-size: 24px; }
+    .ben h3 { font-size: 20px; line-height: 28px; margin-top: 24px; }
+    .ben p { color: var(--muted); margin-top: 8px; }
+    .mais { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 32px; justify-content: center; }
+    .mais span { display: inline-flex; align-items: center; gap: 8px; background: var(--panel); border: 1px solid var(--line); border-radius: 9999px; padding: 8px 16px; font-size: 14px; line-height: 20px; font-weight: 600; }
+    .mais i { color: var(--blue); font-size: 16px; }
+
+    /* telas */
+    .telas { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; }
+    .telas figure { margin: 0; }
+    .telas .tela { border-radius: 16px; padding: 4px; box-shadow: 0 16px 48px rgba(15,23,42,0.08); }
+    .telas .tela img { border-radius: 12px; }
+    .telas figcaption { margin-top: 16px; }
+    .telas figcaption b { display: block; font-size: 16px; line-height: 24px; }
+    .telas figcaption span { color: var(--muted); font-size: 14px; line-height: 20px; }
+
+    /* como funciona */
+    .passos { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-top: 48px; counter-reset: passo; }
+    .passo { position: relative; padding: 32px; background: var(--panel); border: 1px solid var(--line); border-radius: 24px; }
+    .passo .n { width: 40px; height: 40px; border-radius: 9999px; background: var(--tx); color: #fff; display: grid; place-items: center; font-weight: 700; }
+    .passo h3 { font-size: 20px; line-height: 28px; margin-top: 24px; }
+    .passo p { color: var(--muted); margin-top: 8px; }
+
+    /* IA */
+    .ia { background: var(--dark); color: #fff; border-radius: 32px; margin: 0 24px; padding: 96px 0; }
+    .ia .titulo h2 { background: linear-gradient(90deg, #ffffff, #9b9b9b); -webkit-background-clip: text; background-clip: text; color: transparent; }
+    .ia .titulo p { color: #a3a3a3; }
+    .ia .titulo .kicker { color: #8fb0ff; }
+    .ia-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; margin-top: 48px; }
+    .chat { background: var(--dark-2); border-radius: 24px; padding: 24px; display: grid; gap: 12px; }
+    .msg { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 20px; opacity: 0; transform: translateY(8px); transition: opacity 600ms var(--ease), transform 600ms var(--ease); }
+    .msg.vc { justify-self: end; background: var(--blue); }
+    .msg.ia2 { background: var(--dark-3); color: #e5e5e5; font-family: ui-monospace, 'Geist Mono', monospace; white-space: pre-line; }
+    .chat.on .msg { opacity: 1; transform: none; }
+    .ferramentas { list-style: none; padding: 0; margin: 0; display: grid; gap: 16px; }
+    .ferramentas li { display: flex; gap: 16px; }
+    .ferramentas i { font-size: 24px; color: #8fb0ff; flex: none; }
+    .ferramentas b { display: block; }
+    .ferramentas span { color: #a3a3a3; font-size: 14px; line-height: 20px; }
+
+    /* perguntas */
+    .faq { max-width: 800px; margin: 48px auto 0; display: grid; gap: 12px; }
+    .faq details { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 0 24px; transition: border-color 300ms var(--ease); }
+    .faq details[open] { border-color: #c7d7fe; }
+    .faq summary { list-style: none; cursor: pointer; padding: 24px 0; font-weight: 600; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+    .faq summary::-webkit-details-marker { display: none; }
+    .faq summary i { transition: transform 500ms var(--ease); color: var(--soft); flex: none; }
+    .faq details[open] summary i { transform: rotate(45deg); }
+    .faq details p { color: var(--muted); padding-bottom: 24px; }
+
+    /* final */
+    .final { text-align: center; }
+    .final .caixa { padding: 64px 32px; }
+    .final h2 { font-size: 48px; line-height: 1; max-width: 680px; margin: 0 auto; background: linear-gradient(90deg, #000000, #666666); -webkit-background-clip: text; background-clip: text; color: transparent; padding-bottom: 8px; }
+    .final p { color: var(--muted); font-size: 18px; line-height: 28px; max-width: 560px; margin: 16px auto 0; }
+    .final .btn { margin-top: 32px; }
+    .garantias { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; margin-top: 32px; color: var(--muted); font-size: 14px; line-height: 20px; }
+    .garantias span { display: inline-flex; align-items: center; gap: 8px; }
+    .garantias i { color: var(--green); font-size: 16px; }
+
+    footer { padding: 48px 0 64px; color: var(--soft); font-size: 14px; line-height: 20px; }
+    footer .wrap { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; align-items: center; }
+    footer nav { display: flex; gap: 24px; }
+    footer a { text-decoration: none; color: var(--muted); font-weight: 600; }
+    footer a:hover { color: var(--tx); }
+
+    /* entrada das seções */
+    .rev { opacity: 0; transform: translateY(32px); transition: opacity 700ms var(--ease), transform 700ms var(--ease); }
+    .rev.on { opacity: 1; transform: none; }
+    @media (prefers-reduced-motion: reduce) {
+      .rev, .msg, .mobile-panel a { transform: none !important; transition: opacity 300ms linear; }
+      html { scroll-behavior: auto; }
+    }
+
+    @media (max-width: 960px) {
+      .frase p { font-size: 48px; }
+      .beneficios { grid-template-columns: 1fr 1fr; }
+      .ben, .ben.largo { grid-column: span 1; }
+      .ia-grid { grid-template-columns: 1fr; }
+      .cel { width: 160px; right: -8px; bottom: -32px; border-radius: 24px; }
+      .cel img { border-radius: 16px; }
+    }
+    @media (max-width: 720px) {
+      .nav-links, .nav-acoes { display: none; }
+      .menu-btn { display: block; }
+      .nav { width: calc(100% - 32px); justify-content: space-between; }
+      .hero { padding: 128px 0 48px; }
+      .hero h1 { font-size: 36px; line-height: 40px; }
+      .hero .sub { font-size: 18px; line-height: 28px; }
+      .hero .ctas .btn { width: 100%; justify-content: center; }
+      .vitrine { margin-top: 48px; }
+      .cel { display: none; }
+      .vitrine .tela { max-width: 300px; margin: 0 auto; border-radius: 32px; padding: 8px; background: #0f172a; }
+      .vitrine .tela img { border-radius: 24px; }
+      section { padding: 64px 0; }
+      .titulo h2 { font-size: 30px; line-height: 36px; }
+      .problema, .beneficios, .telas, .passos { grid-template-columns: 1fr; }
+      .caixa, .ben, .passo { padding: 24px; }
+      .frase { padding: 80px 0; }
+      .frase p { font-size: 36px; line-height: 40px; }
+      .ia { margin: 0 8px; border-radius: 24px; padding: 64px 0; }
+      .final h2 { font-size: 36px; line-height: 40px; }
+      .final .caixa { padding: 48px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <a class="skip" href="#conteudo">Pular para o conteúdo</a>
+
+  <header>
+    <nav class="nav" aria-label="Principal">
+      <a class="brand" href="/" aria-label="Casa em Dia, início"><img src="/icon.svg" alt="">Casa em Dia</a>
+      <div class="nav-links">
+        <a href="#recursos">Recursos</a>
+        <a href="#como">Como funciona</a>
+        <a href="#ia">IA</a>
+        <a href="#perguntas">Perguntas</a>
+      </div>
+      <div class="nav-acoes"><a class="btn ghost sm js-entrar" href="/app">Entrar</a><a class="btn primary sm js-criar" href="/app#criar-conta">Criar conta</a></div>
+      <button class="menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false" aria-controls="painelMenu"><span></span><span></span><span></span></button>
+    </nav>
+    <div class="mobile-panel" id="painelMenu" aria-hidden="true">
+      <a href="#recursos">Recursos</a>
+      <a href="#como">Como funciona</a>
+      <a href="#ia">IA</a>
+      <a href="#perguntas">Perguntas</a>
+      <a class="btn primary js-criar" href="/app#criar-conta">Criar conta</a>
+      <a class="btn ghost js-entrar" href="/app">Já tenho conta: entrar</a>
+    </div>
+  </header>
+
+  <main id="conteudo">
+    <!-- topo -->
+    <section class="hero">
+      <div class="wrap">
+        <span class="eyebrow"><i class="ph ph-house-line"></i>Finanças em casal</span>
+        <h1>As contas da casa em dia,<br>sem planilha e sem briga</h1>
+        <p class="sub">Salário, cartões, contas fixas e a divisão das despesas num painel só. Você vê quanto vai sobrar no fim do mês antes de o mês acabar.</p>
+        <div class="ctas">
+          <a class="btn primary lg js-criar" href="/app#criar-conta">Criar minha conta <i class="ph ph-arrow-right"></i></a>
+          <a class="btn ghost lg js-entrar" href="/app">Já tenho conta: entrar</a>
+        </div>
+        <p class="nota">Leva um minuto. Não pedimos senha de banco nem cartão.</p>
+        <div class="provas">
+          <span class="prova"><i class="ph-fill ph-check-circle"></i>Divisão proporcional ao salário</span>
+          <span class="prova"><i class="ph-fill ph-check-circle"></i>Funciona no celular como app</span>
+          <span class="prova"><i class="ph-fill ph-check-circle"></i>Conversa com Claude e ChatGPT</span>
+        </div>
+        <div class="vitrine rev">
+          <div class="tela"><picture><source media="(max-width: 720px)" srcset="/img/home/celular.webp" width="585" height="1200"><img src="/img/home/painel.webp" width="1920" height="1280" alt="Painel do Casa em Dia com saldo previsto de R$ 4.323,99, contas a pagar do mês, saldo das contas bancárias e crédito disponível"></picture></div>
+          <div class="cel"><img src="/img/home/celular.webp" width="585" height="1200" alt="O mesmo painel aberto no celular"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- problema e solução -->
+    <section>
+      <div class="wrap">
+        <div class="titulo rev">
+          <span class="kicker">Por que existe</span>
+          <h2>O dinheiro da casa vive espalhado</h2>
+          <p>Cada um tem um banco, um cartão e um jeito de anotar. O Casa em Dia junta tudo num lugar que os dois enxergam igual.</p>
+        </div>
+        <div class="problema">
+          <div class="caixa antes rev">
+            <h3><i class="ph ph-warning-circle"></i>Sem o Casa em Dia</h3>
+            <p>O salário cai numa conta, a fatura é de outro banco, o aluguel sai no Pix e a conta de luz chega no nome de um só. No fim do mês ninguém sabe ao certo quem pagou o quê, e a conta fica negativa no dia do débito automático.</p>
+          </div>
+          <div class="caixa depois rev">
+            <h3><i class="ph ph-sparkle"></i>Com o Casa em Dia</h3>
+            <ul>
+              <li><i class="ph-fill ph-check-circle"></i><span>Um saldo previsto que já desconta contas, faturas, parcelas e o que vai para a poupança.</span></li>
+              <li><i class="ph-fill ph-check-circle"></i><span>A parte de cada um nas contas da casa, calculada pelo salário, e quanto devolver no Pix.</span></li>
+              <li><i class="ph-fill ph-check-circle"></i><span>Aviso antes de alguma conta ficar no vermelho.</span></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- frase de destaque -->
+    <section class="frase" aria-label="A ideia do Casa em Dia">
+      <div class="wrap">
+        <p id="frase">Saber quanto sobra antes de gastar muda a conversa da casa.</p>
+      </div>
+    </section>
+
+    <!-- recursos -->
+    <section id="recursos">
+      <div class="wrap">
+        <div class="titulo centro rev">
+          <span class="kicker">Recursos</span>
+          <h2>Tudo que entra e sai da casa, num painel só</h2>
+          <p>Feito para o mês real de um casal: salário em dias diferentes, cartão parcelado e conta que um paga pelo outro.</p>
+        </div>
+        <div class="beneficios">
+          <article class="ben largo rev"><div class="ic"><i class="ph ph-chart-line-up"></i></div><h3>Saldo previsto do mês</h3><p>Renda menos sua parte da casa, contas pessoais, poupança e dia a dia. A casinha do painel fica feliz, preocupada ou triste conforme o que sobra.</p></article>
+          <article class="ben largo rev"><div class="ic"><i class="ph ph-scales"></i></div><h3>Divisão justa da casa</h3><p>As contas da casa são divididas pelo salário de cada um, ou meio a meio. O app mostra quem devolve quanto e você marca quando o Pix for feito.</p></article>
+          <article class="ben rev"><div class="ic"><i class="ph ph-credit-card"></i></div><h3>Cartões e parcelas</h3><p>Cada compra cai na fatura certa pelo dia de fechamento. Limite livre e as próximas seis faturas sempre à vista.</p></article>
+          <article class="ben rev"><div class="ic"><i class="ph ph-calendar-check"></i></div><h3>Contas a pagar</h3><p>Contas fixas, faturas, parcelas e assinaturas por dia de vencimento. Pague com outro valor ou pule só este mês.</p></article>
+          <article class="ben rev"><div class="ic"><i class="ph ph-piggy-bank"></i></div><h3>Poupança com metas</h3><p>Caixinhas para reserva, viagem ou carro. Quando entra dinheiro, o app pergunta quanto guardar em cada uma.</p></article>
+        </div>
+        <div class="mais rev" aria-label="Também tem">
+          <span><i class="ph ph-shopping-cart"></i>Despensa e lista de compras</span>
+          <span><i class="ph ph-car"></i>Bens com valor da FIPE</span>
+          <span><i class="ph ph-bank"></i>Empréstimos e antecipação</span>
+          <span><i class="ph ph-television-simple"></i>Assinaturas</span>
+          <span><i class="ph ph-handshake"></i>Receitas e contratos</span>
+          <span><i class="ph ph-bell-ringing"></i>Avisos de vencimento</span>
+          <span><i class="ph ph-moon"></i>Tema escuro</span>
+        </div>
+        <div class="telas">
+          <figure class="rev"><div class="tela"><img src="/img/home/cartoes.webp" width="1500" height="690" loading="lazy" alt="Tela de cartões com a fatura do mês, compras parceladas e próximas faturas"></div><figcaption><b>Cartões</b><span>Fatura do mês, parcelas e limite livre.</span></figcaption></figure>
+          <figure class="rev"><div class="tela"><img src="/img/home/casa.webp" width="1500" height="690" loading="lazy" alt="Tela Nossa casa com o total das contas e a parte de cada pessoa"></div><figcaption><b>Nossa casa</b><span>A parte de cada um e o acerto do mês.</span></figcaption></figure>
+          <figure class="rev"><div class="tela"><img src="/img/home/despensa.webp" width="1500" height="690" loading="lazy" alt="Tela da despensa com produtos, lista de compras e comparação de preço"></div><figcaption><b>Despensa</b><span>O que está acabando e se o preço está caro.</span></figcaption></figure>
+        </div>
+      </div>
+    </section>
+
+    <!-- como funciona -->
+    <section id="como">
+      <div class="wrap">
+        <div class="titulo centro rev">
+          <span class="kicker">Como funciona</span>
+          <h2>Comece em uma tarde, use todo dia</h2>
+        </div>
+        <div class="passos">
+          <div class="passo rev"><span class="n">1</span><h3>Crie a conta e cadastre o básico</h3><p>Contas bancárias com o dia do salário, cartões e as contas fixas da casa. Depois convide quem divide a casa com você. O tour guiado mostra o caminho.</p></div>
+          <div class="passo rev"><span class="n">2</span><h3>Lance o dia a dia</h3><p>Pelo botão de adicionar: gasto, entrada, compra parcelada ou transferência. Ou peça para a IA: “50 de mercado no Pix da Sicredi”.</p></div>
+          <div class="passo rev"><span class="n">3</span><h3>Acompanhe e acerte</h3><p>Marque o que pagou, veja quanto dá para gastar por dia e, no fim do mês, faça o acerto da casa com um Pix.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- IA -->
+    <section id="ia" class="ia">
+      <div class="wrap">
+        <div class="titulo rev">
+          <span class="kicker">Conectar IA</span>
+          <h2>Pergunte e lance conversando</h2>
+          <p>Gere uma chave em Configurações e ligue o Claude ou o ChatGPT ao Casa em Dia. A IA usa o seu acesso e responde curto, para gastar pouco do seu plano.</p>
+        </div>
+        <div class="ia-grid">
+          <div class="chat" id="chat" aria-label="Exemplo de conversa com a IA">
+            <div class="msg vc">lança 50 reais de mercado no pix da sicredi</div>
+            <div class="msg ia2">gasto 50 lançado #1284</div>
+            <div class="msg vc">paguei o aluguel</div>
+            <div class="msg ia2">Aluguel: pago 1.200</div>
+            <div class="msg vc">quanto tenho livre no cartão?</div>
+            <div class="msg ia2">Nubank Roxinho: fatura 299,90 vence 10, livre 840/3.000</div>
+          </div>
+          <ul class="ferramentas rev">
+            <li><i class="ph ph-eye"></i><div><b>Ver</b><span>Resumo do mês, contas a pagar, cartões, extrato, poupança e relatório.</span></div></li>
+            <li><i class="ph ph-plus-circle"></i><div><b>Lançar e receber</b><span>Gasto, entrada, compra parcelada, transferência e salário que caiu.</span></div></li>
+            <li><i class="ph ph-check-square"></i><div><b>Pagar</b><span>Marca conta, fatura ou parcela como paga pelo nome.</span></div></li>
+            <li><i class="ph ph-basket"></i><div><b>Despensa</b><span>“Acabou o café”, “comprei 5 kg de arroz por 32”.</span></div></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- perguntas -->
+    <section id="perguntas">
+      <div class="wrap">
+        <div class="titulo centro rev">
+          <span class="kicker">Perguntas</span>
+          <h2>Perguntas frequentes</h2>
+        </div>
+        <div class="faq">
+          <details><summary>Como eu começo?<i class="ph ph-plus"></i></summary><p>Toque em Criar conta, escolha um login e uma senha e pronto: você ganha uma casa só sua, vazia, e é o administrador dela. Um guia de primeiros passos aparece no painel.</p></details>
+          <details><summary>Como coloco meu parceiro ou parceira?<i class="ph ph-plus"></i></summary><p>Em Configurações, Acessos, crie o login da outra pessoa nos dados da casa. Ela entra com esse login, vê os mesmos números e troca a senha em Meu perfil.</p></details>
+          <details><summary>O Casa em Dia mexe na minha conta do banco?<i class="ph ph-plus"></i></summary><p>Não. Ele não move dinheiro nem pede senha de banco. Você lança o que acontece e o app calcula saldos, faturas e o que vai sobrar.</p></details>
+          <details><summary>Como funciona a divisão das contas da casa?<i class="ph ph-plus"></i></summary><p>As contas marcadas como da casa são somadas e divididas pelo salário de cada pessoa, ou meio a meio se vocês preferirem. Quem pagou mais do que a própria parte recebe a diferença no acerto do mês.</p></details>
+          <details><summary>A outra pessoa vê tudo que eu lanço?<i class="ph ph-plus"></i></summary><p>Quem está nos dados da casa vê os mesmos números. Cada um pode olhar o próprio painel, o da outra pessoa ou o do casal somado. Uma conta separada tem dados próprios que ninguém mais vê.</p></details>
+          <details><summary>Funciona no celular?<i class="ph ph-plus"></i></summary><p>Sim. No celular aparece uma barra de abas embaixo e o botão de adicionar no meio. Dá para colocar na tela de início e abrir como um app.</p></details>
+          <details><summary>E compra parcelada no cartão?<i class="ph ph-plus"></i></summary><p>Você informa o valor total e o número de parcelas. Cada parcela aparece na fatura do mês certo, o limite fica ocupado até a última, e a fatura entra em Contas a pagar no vencimento.</p></details>
+          <details><summary>Meus dados ficam seguros?<i class="ph ph-plus"></i></summary><p>Os dados ficam num banco Supabase em São Paulo e cada casa só enxerga os próprios registros. Chaves de IA podem ser revogadas na hora, e você baixa uma cópia de tudo em Backup quando quiser.</p></details>
+          <details><summary>Preciso usar a IA?<i class="ph ph-plus"></i></summary><p>Não. Tudo funciona pelas telas. A IA é um atalho para quem prefere lançar e perguntar conversando.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- chamada final -->
+    <section class="final">
+      <div class="wrap">
+        <div class="caixa rev">
+          <h2>Coloque o mês de vocês em dia</h2>
+          <p>Quanto entra, quanto sai, quem paga o quê e quanto sobra. Tudo no mesmo lugar, para os dois.</p>
+          <a class="btn primary lg js-criar" href="/app#criar-conta">Criar minha conta <i class="ph ph-arrow-right"></i></a>
+          <div class="garantias">
+            <span><i class="ph-fill ph-check-circle"></i>Sem senha de banco</span>
+            <span><i class="ph-fill ph-check-circle"></i>Dados separados por casa</span>
+            <span><i class="ph-fill ph-check-circle"></i>Exporte tudo quando quiser</span>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>Casa em Dia · finanças em casal</span>
+      <nav aria-label="Rodapé"><a href="/privacidade.html">Privacidade e termos</a><a href="/app#criar-conta">Criar conta</a><a href="/app">Entrar</a></nav>
+    </div>
+  </footer>
+
+  <script>
+    // já está logado? o botão leva direto ao painel
+    fetch('/api/me', { credentials: 'same-origin' }).then((r) => {
+      if (!r.ok) return;
+      document.querySelectorAll('.js-criar').forEach((a) => { a.href = '/app'; a.firstChild.textContent = a.classList.contains('lg') ? 'Abrir meu painel ' : 'Abrir o painel'; });
+      document.querySelectorAll('.js-entrar').forEach((a) => { a.hidden = true; });
+    }).catch(() => {});
+
+    // menu do celular
+    const corpo = document.body; const btn = document.getElementById('menuBtn'); const painel = document.getElementById('painelMenu');
+    const links = [...painel.querySelectorAll('a')];
+    const abrir = (on) => {
+      corpo.classList.toggle('menu-open', on); btn.setAttribute('aria-expanded', on); painel.setAttribute('aria-hidden', !on);
+      links.forEach((a, i) => { a.style.transitionDelay = on ? `${Math.min(i * 60, 400)}ms` : '0ms'; });
+    };
+    btn.addEventListener('click', () => abrir(!corpo.classList.contains('menu-open')));
+    links.forEach((a) => a.addEventListener('click', () => abrir(false)));
+
+    // seções entram ao rolar (uma vez)
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) { e.target.classList.add('on'); io.unobserve(e.target); } }), { threshold: 0.15 });
+    document.querySelectorAll('.rev').forEach((el) => io.observe(el));
+    const chat = document.getElementById('chat');
+    [...chat.children].forEach((m, i) => { m.style.transitionDelay = `${i * 350}ms`; });
+    new IntersectionObserver((es, o) => es.forEach((e) => { if (e.isIntersecting) { chat.classList.add('on'); o.disconnect(); } }), { threshold: 0.4 }).observe(chat);
+
+    // frase de destaque: palavra por palavra ao passar da linha de gatilho
+    const frase = document.getElementById('frase');
+    const azuis = new Set(['sobra', 'antes', 'gastar']);
+    frase.innerHTML = frase.textContent.split(' ').map((w) => `<span class="w${azuis.has(w.replace(/[^\p{L}]/gu, '')) ? ' azul' : ''}">${w}</span>`).join(' ');
+    const palavras = [...frase.querySelectorAll('.w')];
+    let pedido = false;
+    const atualiza = () => {
+      pedido = false;
+      const linha = innerHeight * 0.62;
+      palavras.forEach((w) => { if (w.getBoundingClientRect().top < linha) w.classList.add('on'); });
+    };
+    addEventListener('scroll', () => { if (!pedido) { pedido = true; requestAnimationFrame(atualiza); } }, { passive: true });
+    atualiza();
+
+    // link atual no menu
+    const secoes = ['recursos', 'como', 'ia', 'perguntas'].map((id) => document.getElementById(id));
+    const navLinks = [...document.querySelectorAll('.nav-links a')];
+    const navIo = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) navLinks.forEach((a) => a.classList.toggle('on', a.getAttribute('href') === `#${e.target.id}`)); }), { rootMargin: '-45% 0px -50% 0px' });
+    secoes.forEach((sec) => sec && navIo.observe(sec));
+  </script>
+</body>
+</html>

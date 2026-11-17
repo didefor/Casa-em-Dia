@@ -3,7 +3,7 @@
   "short_name": "Casa em Dia",
   "description": "Finanças do casal",
   "lang": "pt-BR",
-  "start_url": "/",
+  "start_url": "/app",
   "scope": "/",
   "display": "standalone",
   "orientation": "portrait",
