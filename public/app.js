@@ -2215,6 +2215,7 @@ async function draw(fromCache, seq, background = false) {
   let data, banks, html;
   try {
     [data, banks] = await Promise.all([api(sumPath()), api('banks')]);
+    setBanks(banks); // cores dos bancos antes de desenhar
     const page = PAGES[state.page] || PAGES.visao;
     html = await page[3](data);
   } finally { apiFromCache = false; }
