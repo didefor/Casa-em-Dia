@@ -57,7 +57,41 @@
     /* navegação */
     .nav { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 50; display: flex; align-items: center; gap: 24px; padding: 8px 8px 8px 16px; border-radius: 16px; background: rgba(255,255,255,0.78); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(15,23,42,0.08); box-shadow: 0 8px 32px rgba(15,23,42,0.06); width: max-content; max-width: calc(100% - 32px); }
     .brand { display: flex; align-items: center; gap: 8px; text-decoration: none; font-weight: 700; }
-    .brand img { width: 32px; height: 32px; border-radius: 8px; }
+    .brand .casinha { width: 32px; height: 32px; }
+
+    /* a casinha (mesmo personagem do painel) */
+    .casinha { display: inline-block; flex: none; }
+    .casinha svg { display: block; width: 100%; height: 100%; overflow: visible; }
+    .casinha .corpo { transform-box: view-box; transform-origin: 50% 100%; }
+    .casinha .fundo { transition: fill 600ms var(--ease); }
+    .casinha .rosto { opacity: 0; transition: opacity 400ms var(--ease); }
+    .casinha[data-mood="feliz"] .r-feliz, .casinha[data-mood="preocupado"] .r-preocupado, .casinha[data-mood="triste"] .r-triste { opacity: 1; }
+    .casinha[data-mood="feliz"] .corpo { animation: hop 3.2s var(--ease) infinite; }
+    .casinha[data-mood="preocupado"] .corpo { animation: fidget 2.4s ease-in-out infinite; }
+    .casinha .eye { transform-box: fill-box; transform-origin: center; animation: blink 4.2s infinite; }
+    .casinha[data-mood="triste"] .eye { opacity: 0; }
+    .casinha .drop { animation: drop 2.4s ease-in infinite; }
+    .casinha .tear { animation: tear 2.8s ease-in infinite; }
+    @keyframes blink { 0%, 92%, 100% { transform: scaleY(1); } 95% { transform: scaleY(0.12); } }
+    @keyframes hop { 0%, 70%, 100% { transform: translateY(0); } 78% { transform: translateY(-5px); } 86% { transform: translateY(0); } 92% { transform: translateY(-2px); } }
+    @keyframes fidget { 0%, 100% { transform: rotate(0); } 25% { transform: rotate(-2deg); } 75% { transform: rotate(2deg); } }
+    @keyframes drop { 0% { transform: translateY(0); opacity: 0; } 20% { opacity: 1; } 100% { transform: translateY(6px); opacity: 0; } }
+    @keyframes tear { 0% { transform: translateY(0); opacity: 0; } 25% { opacity: 1; } 100% { transform: translateY(9px); opacity: 0; } }
+
+    /* seção do humor */
+    .humor { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 32px; padding: 64px; }
+    .humor .palco { display: grid; place-items: center; background: var(--panel-2); border-radius: 24px; padding: 64px 32px; }
+    .humor .palco .casinha { width: 176px; height: 176px; filter: drop-shadow(0 24px 32px rgba(15,23,42,0.18)); }
+    .humor .saldo { text-align: center; margin-top: 32px; font-size: 30px; line-height: 36px; font-weight: 700; letter-spacing: -0.02em; transition: color 600ms var(--ease); }
+    .humor .saldo small { display: block; font-size: 14px; line-height: 20px; font-weight: 500; color: var(--muted); letter-spacing: 0; margin-top: 4px; text-align: center; }
+    .humores { display: grid; gap: 12px; margin-top: 32px; }
+    .hum { display: flex; gap: 16px; align-items: flex-start; text-align: left; width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 16px; font: inherit; color: inherit; cursor: pointer; transition: border-color 300ms var(--ease), background-color 300ms var(--ease), transform 300ms var(--ease); }
+    .hum:hover { border-color: var(--soft); }
+    .hum:active { transform: scale(0.98); }
+    .hum.on { border-color: var(--cor); background: var(--fundo); }
+    .hum .casinha { width: 40px; height: 40px; }
+    .hum b { display: block; }
+    .hum span.t { color: var(--muted); font-size: 14px; line-height: 20px; }
     .nav-links { display: flex; gap: 4px; }
     .nav-acoes { display: flex; gap: 8px; }
     .nav-links a { text-decoration: none; color: var(--muted); font-size: 14px; line-height: 20px; font-weight: 600; padding: 8px 12px; border-radius: 8px; transition: color 300ms var(--ease), background-color 300ms var(--ease); }
@@ -193,6 +227,7 @@
     .rev.on { opacity: 1; transform: none; }
     @media (prefers-reduced-motion: reduce) {
       .rev, .msg, .mobile-panel a { transform: none !important; transition: opacity 300ms linear; }
+      .casinha .corpo, .casinha .eye, .casinha .drop, .casinha .tear { animation: none !important; }
       html { scroll-behavior: auto; }
     }
 
@@ -201,6 +236,7 @@
       .beneficios { grid-template-columns: 1fr 1fr; }
       .ben, .ben.largo { grid-column: span 1; }
       .ia-grid { grid-template-columns: 1fr; }
+      .humor { grid-template-columns: 1fr; padding: 48px 32px; }
       .cel { width: 160px; right: -8px; bottom: -32px; border-radius: 24px; }
       .cel img { border-radius: 16px; }
     }
@@ -224,6 +260,9 @@
       .frase p { font-size: 36px; line-height: 40px; }
       .ia { margin: 0 8px; border-radius: 24px; padding: 64px 0; }
       .final h2 { font-size: 36px; line-height: 40px; }
+      .humor { padding: 24px; border-radius: 24px; gap: 32px; }
+      .humor .palco { padding: 48px 24px; }
+      .humor .palco .casinha { width: 128px; height: 128px; }
       .final .caixa { padding: 48px 24px; }
     }
   </style>
@@ -233,7 +272,7 @@
 
   <header>
     <nav class="nav" aria-label="Principal">
-      <a class="brand" href="/" aria-label="Casa em Dia, início"><img src="/icon.svg" alt="">Casa em Dia</a>
+      <a class="brand" href="/" aria-label="Casa em Dia, início"><span class="casinha" data-casinha data-auto="3200" aria-hidden="true"></span>Casa em Dia</a>
       <div class="nav-links">
         <a href="#recursos">Recursos</a>
         <a href="#como">Como funciona</a>
@@ -297,6 +336,30 @@
               <li><i class="ph-fill ph-check-circle"></i><span>A parte de cada um nas contas da casa, calculada pelo salário, e quanto devolver no Pix.</span></li>
               <li><i class="ph-fill ph-check-circle"></i><span>Aviso antes de alguma conta ficar no vermelho.</span></li>
             </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- a casinha -->
+    <section aria-labelledby="tituloHumor">
+      <div class="wrap">
+        <div class="humor rev">
+          <div class="palco">
+            <span class="casinha" id="casinhaGrande" data-casinha data-auto="2600" role="img" aria-label="Casinha do Casa em Dia"></span>
+            <div class="saldo" id="saldoHumor" aria-live="polite">R$ 1.284,37<small>sobra prevista no fim do mês</small></div>
+          </div>
+          <div>
+            <div class="titulo">
+              <span class="kicker">Conheça a casinha</span>
+              <h2 id="tituloHumor">Ela mostra o humor do seu mês</h2>
+              <p>A casinha do painel olha o saldo previsto e muda de cara. Bate o olho e você já sabe se dá para aquele jantar fora.</p>
+            </div>
+            <div class="humores" role="group" aria-label="Expressões da casinha">
+              <button class="hum on" data-mood="feliz" style="--cor:#2563eb;--fundo:#f3f7ff"><span class="casinha" data-casinha data-fixo="feliz"></span><span><b>Feliz</b><span class="t">Saldo tranquilo: sobra pelo menos 10% da renda do mês.</span></span></button>
+              <button class="hum" data-mood="preocupado" style="--cor:#f59e0b;--fundo:#fffaf0"><span class="casinha" data-casinha data-fixo="preocupado"></span><span><b>Preocupada</b><span class="t">Saldo apertado: sobra menos de 10% da renda.</span></span></button>
+              <button class="hum" data-mood="triste" style="--cor:#64748b;--fundo:#f6f7f9"><span class="casinha" data-casinha data-fixo="triste"></span><span><b>Triste</b><span class="t">No vermelho: as contas do mês passam da renda.</span></span></button>
+            </div>
           </div>
         </div>
       </div>
@@ -429,6 +492,43 @@
   </footer>
 
   <script>
+    // ---------- a casinha: o mesmo personagem do painel, trocando de expressão ----------
+    const olho = (cx, cor) => `<g class="eye"><circle cx="${cx}" cy="36" r="4.4" fill="${cor}"/><circle cx="${cx + 1.4}" cy="34.6" r="1.3" fill="#fff"/></g>`;
+    const CASINHA = `<svg viewBox="0 0 64 64"><g class="corpo">
+      <rect class="fundo" width="64" height="64" rx="14"/>
+      <path d="M12 31l20-16.5 20 16.5v18.5H12z" fill="#fff"/>
+      ${olho(26, '#2563eb')}${olho(38, '#f43f5e')}
+      <g class="rosto r-feliz"><path d="M27 42.5q5 5 10 0" fill="none" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+        <circle cx="21.5" cy="41.5" r="2" fill="#f43f5e" opacity=".25"/><circle cx="42.5" cy="41.5" r="2" fill="#f43f5e" opacity=".25"/></g>
+      <g class="rosto r-preocupado"><path d="M22.5 30.6l5-1.4M41.5 30.6l-5-1.4" stroke="#1e293b" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M27.5 44.5q1.6-1.6 3.2 0t3.2 0t3.2 0" fill="none" stroke="#1e293b" stroke-width="1.8" stroke-linecap="round"/>
+        <path class="drop" d="M45.5 27.5q2 3 0 4.4q-2-1.4 0-4.4z" fill="#38bdf8"/></g>
+      <g class="rosto r-triste"><path d="M22.5 30.6l5-2.6M41.5 30.6l-5-2.6" stroke="#1e293b" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M21 31.5h10v4.2h-10zM33 31.5h10v4.2h-10z" fill="#fff"/><path d="M21.6 35.6h9M33.4 35.6h9" stroke="#1e293b" stroke-width="1.3" stroke-linecap="round" opacity=".55"/>
+        <path d="M27.5 45.5q4.5-4 9 0" fill="none" stroke="#1e293b" stroke-width="2" stroke-linecap="round"/>
+        <path class="tear" d="M24.5 40q1.6 2.6 0 3.6q-1.6-1 0-3.6z" fill="#38bdf8"/></g>
+    </g></svg>`;
+    const COR = { feliz: '#2563eb', preocupado: '#f59e0b', triste: '#64748b' };
+    const HUMORES = ['feliz', 'preocupado', 'triste'];
+    const SALDO = { feliz: ['R$ 1.284,37', '#16a34a'], preocupado: ['R$ 312,90', '#d97706'], triste: ['−R$ 486,15', '#dc2626'] };
+    const poeHumor = (el, m) => { el.dataset.mood = m; el.querySelector('.fundo').setAttribute('fill', COR[m]); el.querySelector('.fundo').style.fill = COR[m]; };
+    document.querySelectorAll('[data-casinha]').forEach((el) => { el.innerHTML = CASINHA; poeHumor(el, el.dataset.fixo || 'feliz'); });
+
+    const grande = document.getElementById('casinhaGrande');
+    const saldo = document.getElementById('saldoHumor');
+    const botoes = [...document.querySelectorAll('.hum')];
+    const mostra = (m) => {
+      poeHumor(grande, m);
+      saldo.firstChild.textContent = SALDO[m][0]; saldo.style.color = SALDO[m][1];
+      botoes.forEach((b) => b.classList.toggle('on', b.dataset.mood === m));
+    };
+    mostra('feliz');
+    // troca sozinha; quem toca numa expressão assume o controle por um tempo
+    const ciclo = (el, ms, aplicar) => { let i = 0; let pausa = 0; const t = setInterval(() => { if (Date.now() < pausa) return; i = (i + 1) % 3; aplicar(HUMORES[i]); }, ms); return { pausar: (m) => { i = HUMORES.indexOf(m); pausa = Date.now() + 8000; }, t }; };
+    const cGrande = ciclo(grande, Number(grande.dataset.auto), mostra);
+    botoes.forEach((b) => b.addEventListener('click', () => { mostra(b.dataset.mood); cGrande.pausar(b.dataset.mood); }));
+    document.querySelectorAll('.brand [data-casinha]').forEach((el) => ciclo(el, Number(el.dataset.auto), (m) => poeHumor(el, m)));
+
     // já está logado? o botão leva direto ao painel
     fetch('/api/me', { credentials: 'same-origin' }).then((r) => {
       if (!r.ok) return;
