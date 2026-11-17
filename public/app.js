@@ -1531,7 +1531,7 @@ async function viewIA() {
       <h2>Como conectar</h2>
       <div class="tabs four">${[['claude', 'Claude'], ['chatgpt', 'ChatGPT'], ['code', 'Desktop / Code'], ['outro', 'Outros']].map(([k, l]) => `<button data-ia-tab="${k}" class="${tab === k ? 'on' : ''}">${l}</button>`).join('')}</div>
       <ol class="steps">${steps[tab].map((x) => `<li>${x}</li>`).join('')}</ol>
-      <p class="muted small"><b>Importante:</b> a IA acessa pela internet, então o app precisa ter um endereço <b>https</b> público (ex.: Tailscale Funnel, Cloudflare Tunnel ou Caddy com domínio). Configure esse endereço em <code>PUBLIC_URL</code> no docker-compose.</p>
+      <p class="muted small"><b>Importante:</b> o endereço da chave já é público (o app está na internet). Guarde como senha e revogue aqui embaixo se vazar.</p>
     </section>
     <section class="panel">
       <h2>O que a IA consegue fazer</h2>
