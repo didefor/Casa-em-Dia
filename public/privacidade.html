@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacidade e termos · Casa em Dia</title>
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <style>
+    :root { --bg: #eef1f6; --panel: #fff; --text: #0f172a; --muted: #64748b; --line: #e2e8f0; --blue: #2563eb; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0b0f17; --panel: #121826; --text: #e2e8f0; --muted: #94a3b8; --line: #1f2937; --blue: #60a5fa; } }
+    body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.6 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; }
+    main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
+    article { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 24px; }
+    h1 { font-size: 24px; margin: 0 0 4px; } h2 { font-size: 17px; margin: 24px 0 6px; }
+    p, li { color: var(--text); } small, .muted { color: var(--muted); } a { color: var(--blue); }
+  </style>
+</head>
+<body>
+<main><article>
+  <h1>Privacidade e termos de uso</h1>
+  <p class="muted">Casa em Dia · versão de 13/11/2026</p>
+
+  <h2>Quem cuida dos seus dados</h2>
+  <p>O Casa em Dia é um aplicativo instalado no servidor da pessoa que o administra (o “administrador do servidor”). É ela quem decide como o app funciona e é a responsável (controladora) pelos dados, nos termos da Lei Geral de Proteção de Dados (Lei 13.709/2018). Para qualquer pedido sobre seus dados, fale com o administrador do servidor.</p>
+
+  <h2>Quais dados o app guarda e por quê</h2>
+  <ul>
+    <li><b>Cadastro:</b> nome, login, e-mail e telefone (opcionais), foto (opcional) e senha — para você entrar e ser identificado.</li>
+    <li><b>Finanças que você cadastra:</b> contas, cartões, lançamentos, receitas, contas fixas, assinaturas, empréstimos, bens e metas — para calcular o saldo, a divisão da casa e os avisos.</li>
+    <li><b>Bancos conectados (opcional):</b> se você ligar o Open Finance, o app recebe as movimentações das contas que você autorizou no seu banco, pela Pluggy, e as usa para lançar automaticamente.</li>
+    <li><b>Segurança:</b> registro de acessos (data, endereço IP e ação) para proteger sua conta e investigar problemas. Guardado por até 1 ano.</li>
+    <li><b>Notificações:</b> o endereço do aparelho para enviar avisos, se você ativar.</li>
+  </ul>
+  <p>Os dados são usados só para o funcionamento do app. Não são vendidos, não há anúncios e não são compartilhados com terceiros, exceto quando você mesmo liga uma integração (Open Finance pela Pluggy, ou um assistente de IA com a sua chave).</p>
+
+  <h2>Como os dados são protegidos</h2>
+  <ul>
+    <li>Conexão criptografada (https) quando acessado pela internet.</li>
+    <li>Senhas guardadas com scrypt (ninguém, nem o administrador, vê sua senha).</li>
+    <li>Login em 2 etapas opcional (código do celular).</li>
+    <li>Chaves de integração e backups criptografados (AES-256), com a chave guardada fora do banco.</li>
+    <li>Contas separadas: cada conta separada tem seus dados num arquivo próprio, que outros usuários não acessam pelo app.</li>
+    <li>Backup automático no próprio servidor.</li>
+  </ul>
+
+  <h2>Seus direitos</h2>
+  <ul>
+    <li><b>Ver e baixar seus dados:</b> Meu perfil → “Baixar meus dados”.</li>
+    <li><b>Corrigir:</b> edite diretamente no app.</li>
+    <li><b>Excluir sua conta:</b> Meu perfil → “Excluir minha conta”. Numa conta separada, os dados dela são apagados junto (podem permanecer nos backups até serem substituídos).</li>
+    <li><b>Revogar integrações:</b> remova bancos conectados e chaves de IA quando quiser; no Open Finance, também pelo app do seu banco.</li>
+  </ul>
+
+  <h2>Termos de uso</h2>
+  <ul>
+    <li>O app é uma ferramenta de organização. Os cálculos são previsões com base no que foi cadastrado e não substituem o extrato do banco nem aconselhamento financeiro.</li>
+    <li>Você é responsável pelo que cadastra e por manter sua senha em segredo.</li>
+    <li>O administrador pode aprovar, bloquear ou excluir acessos.</li>
+  </ul>
+  <p class="muted"><a href="/">Voltar ao app</a></p>
+</article></main>
+</body>
+</html>
