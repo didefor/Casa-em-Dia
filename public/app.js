@@ -2596,6 +2596,22 @@ const whenTxt = (at) => new Date(String(at).replace(' ', 'T') + 'Z').toLocaleStr
 async function viewPerfil(d) {
   const u = state.user;
   const sec = await api('me/security').catch(() => null);
+  const wa = await api('whatsapp').catch(() => null);
+  const cod = state.waCodigo;
+  const waLink = (c) => (wa?.numero_agente ? `https://wa.me/${wa.numero_agente}?text=${encodeURIComponent(`CASA ${c}`)}` : null);
+  const waBox = !wa || !wa.ativo ? '' : `<section class="panel" style="max-width:640px">
+    <h2>WhatsApp</h2>
+    <p class="muted small" style="margin-top:0">Mande gastos, pagamentos e perguntas por mensagem: “gastei 50 no mercado no pix da sicredi”, “paguei o aluguel”, “quanto sobra este mês?”. A assistente lança no Casa em Dia por você.</p>
+    ${wa.ligado ? `<div class="row" style="padding:10px 0"><div><b>Ligado</b> <span class="pill green">${esc(wa.telefone)}</span><div class="muted small">${wa.ultimo_uso ? `Última mensagem: ${whenTxt(wa.ultimo_uso)}` : 'Ainda sem mensagens.'}${wa.numero_agente ? ` · <a href="https://wa.me/${wa.numero_agente}" target="_blank" rel="noopener">abrir conversa</a>` : ''}</div></div><button class="btn sm danger" id="waOff">Desligar</button></div>`
+    : cod ? `<div class="totp-box"><p><b>1.</b> Mande esta mensagem para a assistente no WhatsApp, a partir do número ${esc(cod.telefone)}:</p>
+        <div class="totp-key">CASA ${esc(cod.codigo)}</div>
+        ${waLink(cod.codigo) ? `<p><a class="btn primary" href="${waLink(cod.codigo)}" target="_blank" rel="noopener">Abrir o WhatsApp com a mensagem pronta</a></p>` : ''}
+        <p class="muted small"><b>2.</b> Quando ela responder que ligou, toque em “Já mandei”. O código vale por ${cod.expira_min} minutos.</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm primary" id="waCheck">Já mandei</button><button class="btn sm" id="waCancel">Cancelar</button></div></div>`
+    : `${wa.pendente ? `<div class="muted small" style="margin-bottom:8px">Pedido de ligação para ${esc(wa.telefone)} esperando o código. Gere um novo se precisar.</div>` : ''}
+      <form id="waForm" class="form-row" style="align-items:end"><div class="field"><label for="wa_tel">Seu número com DDD</label><input id="wa_tel" inputmode="tel" autocomplete="tel" placeholder="(11) 91234-5678" required></div><div class="field"><button class="btn primary">Ligar meu WhatsApp</button></div></form>
+      <div class="error" id="waErr"></div>`}
+  </section>`;
   return `<section class="panel" style="max-width:640px">
     <h2>Meu perfil</h2>
     <form id="profileForm" style="display:grid;gap:12px">
@@ -2618,6 +2634,7 @@ async function viewPerfil(d) {
       <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary">Salvar perfil</button><a class="btn" href="#ia">${I.spark} Conectar IA</a><button type="button" class="btn" id="logoutBtn">Sair da conta</button></div>
     </form>
   </section>
+  ${waBox}
   ${sec ? `<section class="panel" style="max-width:640px">
     <h2>Segurança</h2>
     <div class="row" style="padding:10px 0"><div style="min-width:0"><b>Login em 2 etapas</b> ${sec.totp_enabled ? '<span class="pill green">ligado</span>' : '<span class="pill gray">desligado</span>'}
@@ -2911,6 +2928,27 @@ afterRender = function () {
     const body = { name: $('#p_name').value, email: $('#p_email').value, phone: $('#p_phone').value, photo: $('#p_photo').value };
     if ($('#p_new').value) { body.new_password = $('#p_new').value; body.current_password = $('#p_cur').value; }
     try { const r = await api('me', { method: 'PUT', body }); state.user = r.user; toast('Perfil salvo'); refresh(); } catch (err) { $('#profileErr').textContent = err.message; }
+  };
+};
+
+// WhatsApp em Meu perfil
+const _afterRenderWa = afterRender;
+afterRender = function () {
+  _afterRenderWa();
+  const f = $('#waForm');
+  if (f) f.onsubmit = async (e) => {
+    e.preventDefault();
+    try { state.waCodigo = await api('whatsapp', { method: 'POST', body: { telefone: $('#wa_tel').value } }); refresh(); } catch (err) { $('#waErr').textContent = err.message; }
+  };
+  const ck = $('#waCheck'); if (ck) ck.onclick = async () => {
+    const r = await api('whatsapp');
+    if (r.ligado) { state.waCodigo = null; toast('WhatsApp ligado'); } else toast('Ainda não chegou. Mande a mensagem com o código e tente de novo.');
+    refresh();
+  };
+  const cc = $('#waCancel'); if (cc) cc.onclick = async () => { state.waCodigo = null; await api('whatsapp', { method: 'DELETE' }); refresh(); };
+  const off = $('#waOff'); if (off) off.onclick = async () => {
+    if (!off.dataset.armed) { off.dataset.armed = '1'; off.textContent = 'Confirmar'; return; }
+    await api('whatsapp', { method: 'DELETE' }); toast('WhatsApp desligado'); refresh();
   };
 };
 
