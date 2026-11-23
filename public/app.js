@@ -2454,6 +2454,8 @@ function authScreen(html) {
   return el;
 }
 
+const GOOGLE_BTN = (txt) => `<div class="auth-ou"><span>ou</span></div><a class="btn google-btn" href="/api/auth/google"><svg viewBox="0 0 48 48" width="18" height="18" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>${txt}</a>`;
+
 async function showLogin(msg = '') {
   let info = { signup: false };
   try { info = await (await fetch('/api/login-info', { credentials: 'same-origin' })).json(); } catch (e) {}
@@ -2467,13 +2469,15 @@ async function showLogin(msg = '') {
     <div class="field"><label for="l_pass">Senha</label><input id="l_pass" type="password" name="password" autocomplete="current-password" required></div>
     <div class="error" id="loginErr"></div>
     <button class="btn primary">Entrar</button>
+    ${info.google ? GOOGLE_BTN('Entrar com o Google') : ''}
+    ${location.hash === '#erro-google' ? '<div class="error">Não deu para entrar com o Google. Tente de novo.</div>' : ''}
     ${info.signup ? '<p class="small" style="margin:0;text-align:center">Não tem acesso? <button type="button" class="link-btn" id="toSignup">Criar conta</button></p>' : ''}
     <div class="field" id="l_code_f" hidden><label for="l_code">Código de 2 etapas</label><input id="l_code" name="code" inputmode="numeric" autocomplete="one-time-code" placeholder="6 números do app autenticador"><span class="hint">Perdeu o celular? Use um código de recuperação (ex.: a1b2c-3d4e5).</span></div>
     <p class="muted small" style="margin:0">Esqueceu a senha? Peça ao administrador da sua casa para definir uma nova em Acessos. · <a href="privacidade.html" target="_blank" rel="noopener">Privacidade</a> · <a href="/">Conheça o Casa em Dia</a></p>
   </form>`);
   $('#l_login').focus();
-  const ts = $('#toSignup'); if (ts) ts.onclick = showSignup;
-  if (info.signup && location.hash === '#criar-conta') return showSignup();
+  const ts = $('#toSignup'); if (ts) ts.onclick = () => showSignup(info);
+  if (info.signup && location.hash === '#criar-conta') return showSignup(info);
   $('#loginForm').onsubmit = async (e) => {
     e.preventDefault();
     const f = e.target;
@@ -2485,7 +2489,7 @@ async function showLogin(msg = '') {
   };
 }
 
-function showSignup() {
+function showSignup(info = {}) {
   authScreen(`<form class="panel auth-card" id="signupForm">
     <div class="auth-brand">${LOGO}<div><b>Casa em Dia</b><small>Criar conta</small></div></div>
     <h2>Criar conta</h2>
@@ -2499,6 +2503,7 @@ function showSignup() {
     <label class="of-check small"><input type="checkbox" id="r_terms" required> <span>Li e aceito a <a href="privacidade.html" target="_blank" rel="noopener">política de privacidade e os termos de uso</a></span></label>
     <div class="error" id="signupErr"></div>
     <button class="btn primary">Criar conta e entrar</button>
+    ${info.google ? GOOGLE_BTN('Criar conta com o Google') : ''}
     <p class="small" style="margin:0;text-align:center"><button type="button" class="link-btn" id="toLogin">Já tenho acesso: entrar</button></p>
   </form>`);
   $('#r_name').focus();

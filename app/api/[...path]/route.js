@@ -13,6 +13,7 @@ async function handle(req, ctx, metodo) {
   }
   try {
     const out = await rotear(metodo, path, url, body);
+    if (out && out.__redirect) return NextResponse.redirect(new URL(out.__redirect, url.origin), 303);
     if (out && out.__download) {
       return new NextResponse(JSON.stringify(out.conteudo, null, 1), {
         headers: { 'content-type': 'application/json; charset=utf-8', 'content-disposition': `attachment; filename="${out.__download}"` },
