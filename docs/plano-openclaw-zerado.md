@@ -5,7 +5,7 @@
 > Confirme com o Diego antes de cada passo marcado com ⚠️.
 
 ## Objetivo
-- Zerar o OpenClaw do servidor (container `big-bear-openclaw`).
+- Zerar o OpenClaw do servidor (container `openclaw`, imagem `ghcr.io/openclaw/openclaw:2026.9.6`, portas 18789 e 18790).
 - Um agente só, a **Rai do Casa em Dia**, que atende os usuários do Casa em Dia pelo WhatsApp (chip dedicado).
 - Sem e-mail, sem Google, sem agenda, sem rodar comandos. Só as ferramentas do Casa em Dia (MCP).
 - Workspace com backup num **repositório novo** (ex.: `didefor/casa-em-dia-agente`, privado, criado pelo Diego).
@@ -14,7 +14,7 @@
 ## 0. Antes de apagar (backup)
 ```bash
 docker ps --format '{{.Names}}' | grep -i openclaw        # confirma o nome do container
-docker exec -it big-bear-openclaw sh                       # entra no container
+docker exec -it openclaw sh                       # entra no container
 openclaw --version
 openclaw config file                                        # caminho do openclaw.json
 openclaw backup create                                      # snapshot restaurável (ver docs.openclaw.ai/cli/backup)
